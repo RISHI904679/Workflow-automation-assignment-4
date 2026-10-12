@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+                  xmlns:modeler="http://camunda.org/schema/modeler/1.0"
+                  id="Definitions_Exercise4" targetNamespace="https://example.edu/exercise4"
+                  modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.8.0">
+  <bpmn:process id="exercise4_leave_request" name="Exercise 4 - Leave Request" isExecutable="true">
+    <bpmn:documentation>A simple classroom process: start an instance, claim Submit leave request in Tasklist, enter Name, Date and Reason, and complete the task. Inspect the three submitted process variables in Operate. The process records a request; it does not approve leave.</bpmn:documentation>
+    <bpmn:startEvent id="Start_Request" name="Leave request started">
+      <bpmn:outgoing>Flow_Start_Submit</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Task_SubmitLeave" name="Submit leave request">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="exercise4_leave_form" bindingType="deployment" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Start_Submit</bpmn:incoming>
+      <bpmn:outgoing>Flow_Submit_End</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="End_Recorded" name="Leave request recorded">
+      <bpmn:incoming>Flow_Submit_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Start_Submit" sourceRef="Start_Request" targetRef="Task_SubmitLeave" />
+    <bpmn:sequenceFlow id="Flow_Submit_End" sourceRef="Task_SubmitLeave" targetRef="End_Recorded" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_Exercise4">
+    <bpmndi:BPMNPlane id="Plane_Exercise4" bpmnElement="exercise4_leave_request">
+      <bpmndi:BPMNShape id="Shape_Start" bpmnElement="Start_Request">
+        <dc:Bounds x="180" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="148" y="184" width="100" height="40" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Submit" bpmnElement="Task_SubmitLeave">
+        <dc:Bounds x="310" y="120" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End" bpmnElement="End_Recorded">
+        <dc:Bounds x="565" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="533" y="184" width="100" height="40" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Start_Submit" bpmnElement="Flow_Start_Submit">
+        <di:waypoint x="216" y="160" /><di:waypoint x="310" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Submit_End" bpmnElement="Flow_Submit_End">
+        <di:waypoint x="470" y="160" /><di:waypoint x="565" y="160" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
