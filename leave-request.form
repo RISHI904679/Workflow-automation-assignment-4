@@ -1,0 +1,45 @@
+{
+  "components": [
+    {
+      "key": "name",
+      "label": "Full name",
+      "type": "textfield",
+      "id": "Field_FullName",
+      "description": "Enter your full name.",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "key": "date",
+      "label": "Leave start date",
+      "type": "datetime",
+      "id": "Field_LeaveDate",
+      "subtype": "date",
+      "dateLabel": "Leave start date",
+      "timeLabel": "Time",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "key": "reason",
+      "label": "Reason for leave",
+      "type": "textarea",
+      "id": "Field_Reason",
+      "description": "Briefly explain why you need leave.",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "type": "default",
+  "id": "leave_request_form",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.8.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.0.0"
+  },
+  "schemaVersion": 16
+}

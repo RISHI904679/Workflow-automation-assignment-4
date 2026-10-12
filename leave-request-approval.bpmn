@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions
+  xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+  xmlns:modeler="http://camunda.org/schema/modeler/1.0"
+  id="Definitions_LeaveApproval"
+  targetNamespace="https://example.com/camunda/leave-approval"
+  exporter="Camunda Modeler"
+  exporterVersion="5.0.0"
+  modeler:executionPlatform="Camunda Cloud"
+  modeler:executionPlatformVersion="8.8.0">
+
+  <bpmn:process id="Process_LeaveApproval" name="Leave Request and Approval" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_Leave" name="Leave request started">
+      <bpmn:outgoing>Flow_Start_Submit</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:userTask id="Task_SubmitLeave" name="Submit leave request">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="leave_request_form" bindingType="deployment" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Start_Submit</bpmn:incoming>
+      <bpmn:outgoing>Flow_Submit_Review</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:userTask id="Task_ReviewLeave" name="Review leave request">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Submit_Review</bpmn:incoming>
+      <bpmn:outgoing>Flow_Review_Gateway</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="Gateway_Approval" name="Leave approved?" default="Flow_Rejected">
+      <bpmn:incoming>Flow_Review_Gateway</bpmn:incoming>
+      <bpmn:outgoing>Flow_Approved</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Rejected</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:endEvent id="EndEvent_Approved" name="Leave approved">
+      <bpmn:incoming>Flow_Approved</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:endEvent id="EndEvent_Rejected" name="Leave rejected">
+      <bpmn:incoming>Flow_Rejected</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_Start_Submit" sourceRef="StartEvent_Leave" targetRef="Task_SubmitLeave" />
+    <bpmn:sequenceFlow id="Flow_Submit_Review" sourceRef="Task_SubmitLeave" targetRef="Task_ReviewLeave" />
+    <bpmn:sequenceFlow id="Flow_Review_Gateway" sourceRef="Task_ReviewLeave" targetRef="Gateway_Approval" />
+    <bpmn:sequenceFlow id="Flow_Approved" name="Approved" sourceRef="Gateway_Approval" targetRef="EndEvent_Approved">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= approved = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Rejected" name="Rejected / not approved" sourceRef="Gateway_Approval" targetRef="EndEvent_Rejected" />
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_LeaveApproval">
+    <bpmndi:BPMNPlane id="BPMNPlane_LeaveApproval" bpmnElement="Process_LeaveApproval">
+      <bpmndi:BPMNShape id="Shape_Start" bpmnElement="StartEvent_Leave">
+        <dc:Bounds x="120" y="210" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="80" y="253" width="120" height="30" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Submit" bpmnElement="Task_SubmitLeave">
+        <dc:Bounds x="220" y="185" width="160" height="86" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Review" bpmnElement="Task_ReviewLeave">
+        <dc:Bounds x="440" y="185" width="160" height="86" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway" bpmnElement="Gateway_Approval" isMarkerVisible="true">
+        <dc:Bounds x="655" y="203" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="630" y="165" width="100" height="25" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Approved" bpmnElement="EndEvent_Approved">
+        <dc:Bounds x="800" y="135" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="775" y="175" width="95" height="25" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Rejected" bpmnElement="EndEvent_Rejected">
+        <dc:Bounds x="800" y="285" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="775" y="325" width="95" height="25" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Start_Submit" bpmnElement="Flow_Start_Submit">
+        <di:waypoint x="156" y="228" /><di:waypoint x="220" y="228" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Submit_Review" bpmnElement="Flow_Submit_Review">
+        <di:waypoint x="380" y="228" /><di:waypoint x="440" y="228" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Review_Gateway" bpmnElement="Flow_Review_Gateway">
+        <di:waypoint x="600" y="228" /><di:waypoint x="655" y="228" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Approved" bpmnElement="Flow_Approved">
+        <di:waypoint x="680" y="203" /><di:waypoint x="680" y="153" /><di:waypoint x="800" y="153" />
+        <bpmndi:BPMNLabel><dc:Bounds x="714" y="130" width="55" height="20" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Rejected" bpmnElement="Flow_Rejected">
+        <di:waypoint x="680" y="253" /><di:waypoint x="680" y="303" /><di:waypoint x="800" y="303" />
+        <bpmndi:BPMNLabel><dc:Bounds x="706" y="307" width="90" height="20" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
